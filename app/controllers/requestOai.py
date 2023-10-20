@@ -29,7 +29,7 @@ class requestOAI:
 
             for result in results["results"]:
                 doi = result.get("doi")
-                if doi is None:
+                if doi is None or not doi.strip():
                     continue
 
                 # Set journal info into each result

@@ -57,16 +57,26 @@ class ArticleService:
 
     def create_or_update_article(self, article):
         doi = article.get("doi")
+        if doi is None or not doi.strip():
+            return
+
         last_update = article.get("last_update")
         existing_article = self.article_repo.find_by_doi(doi)
 
         if existing_article:
             if existing_article["last_update"] == last_update:
-                return last_update
+                return
             else:
-                self.article_repo.update_article(existing_article["articleId"], article)
+                try:
+                    self.article_repo.update_article(
+                        existing_article["article_id"], article
+                    )
+                    return
+                except Exception as e:
+                    return
         else:
-            if doi:
+            try:
                 self.article_repo.create_article(article)
-            else:
+                return
+            except Exception as e:
                 return
